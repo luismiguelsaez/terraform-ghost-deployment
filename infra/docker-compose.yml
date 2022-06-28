@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+
+  ghost:
+    image: ghost:5.2.3
+    restart: always
+    ports:
+      - 80:2368
+    environment:
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: s3cur3P4ssW0rd
+      database__connection__database: ghost
+      url: http://${PUBLIC_IP}:8080
+    volumes:
+      - /data/ghost/content:/var/lib/ghost/content:rw
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: s3cur3P4ssW0rd
+    volumes:
+      - /data/ghost/db:/var/lib/mysql:rw
+
