@@ -10,6 +10,14 @@
 - Using EBS instance, so information is not lost if it is destroyed
 - For this exercise, we are using `aws_ami` resource to get the latest version, but it's better to specify it as part of the instance code, so it isn't recreated every time there is a new version available
 - We are adding local SSH public key for testing purposes
+- Created SSH key from Terraform. Although this is not secure and should be stored in some service like Vault, it works for this exercise
+- To connect to the instance, we would need to get the SSH private key and IP from outputs
+  ```bash
+  terraform output ssh_private_key > key 
+  chmod 0600 key
+  INSTANCE_IP=$(terraform output public_ip | sed 's/"//g')
+  ssh -i key ubuntu@${INSTANCE_IP}
+  ```
 
 ### Bootstrap
 
@@ -27,4 +35,15 @@
 
 ### CICD
 
-- New code will be uploaded to the server after `main` branch push/merge events from Github Actions pipeline
+- We would need to configure the following variables in Github Actions to be able to execute the code
+
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
+  - `AWS_DEFAULT_REGION` ( this is not needed, as we configured the region in the code )
+
+- New content for Ghost server could be uploaded to the server after `main` branch push/merge events from Github Actions pipeline, if we store it as part of the repo
+- Setup CICD pipeline variables we would need to configure to use [rsync action](https://github.com/marketplace/actions/action-rsync)
+
+  - `AWS_INSTANCE_IP`
+  - `AWS_INSTANCE_SSH_KEY`
+

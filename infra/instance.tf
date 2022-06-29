@@ -55,7 +55,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_key_pair" "main" {
   key_name   = "main"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = chomp(tls_private_key.ssh.public_key_openssh)
 }
 
 resource "aws_instance" "ghost" {
@@ -79,7 +79,7 @@ cat <<EON > /root/docker-compose.yml
 ${file("docker-compose.yml")}
 EON
 
-docker compose up -d -f /root/docker-compose.yml
+docker compose -f /root/docker-compose.yml up -d
 EOF
 
   tags = {
