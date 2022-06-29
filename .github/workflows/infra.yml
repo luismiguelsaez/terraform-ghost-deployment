@@ -22,7 +22,7 @@ jobs:
           path: infra
   plan:
     runs-on: ubuntu-latest
-    name: Plan terraform changes
+    name: Apply terraform changes
     needs: [validate]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
