@@ -11,9 +11,6 @@ on:
 jobs:
   rsync:
     runs-on: ubuntu-latest
-    env:
-      AWS_HOST_IP: ${{ secrets.AWS_HOST_IP }}
-      AWS_SSH_PRIVKEY: ${{ secrets.AWS_SSH_PRIVKEY }} 
     steps:
       - uses: actions/checkout@v2
       - uses: up9cloud/action-rsync@master
