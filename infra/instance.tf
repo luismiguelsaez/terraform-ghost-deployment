@@ -75,11 +75,12 @@ ${file("bootstrap.sh")}
 
 export PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
 
-cat <<EON > /root/docker-compose.yml
+cat <<EON > /home/app/docker-compose.yml
 ${file("docker-compose.yml")}
 EON
 
-docker compose -f /root/docker-compose.yml up -d
+chown app. /home/app/docker-compose.yml
+docker compose -f /home/app/docker-compose.yml up -d
 EOF
 
   tags = {

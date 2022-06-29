@@ -26,14 +26,25 @@ apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 # Create content directories
 
-mkdir -p /data/ghost/content
+mkdir -p /data/ghost/content /data/ghost/backup
 
-# Add user to docker group
+# Setup application user
 
-usermod -aG docker ubuntu
+useradd --groups docker --comment "Application user" --create-home --shell /usr/bin/bash app
+mkdir /home/app/.ssh
+chmod 0700 /home/app/.ssh
+cp -rp /home/ubuntu/.ssh/authorized_keys /home/app/.ssh/
+chown -R app. /home/app/.ssh
+
+chown -R app. /data/ghost
 
 # Enable and start docker service
 
 systemctl enable docker
 systemctl start docker
 
+# Setup crontab job
+
+cat << EOF > /var/spool/cron/crontabs/app
+0 0 * * * docker compose exec db bash -c 'mysqldump -u root -p"\${MYSQL_ROOT_PASSWORD}" ghost' | gzip -9 > /data/ghost/backup/\$(date '+%Y%m%d').sql.gz
+EOF

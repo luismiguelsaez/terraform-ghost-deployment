@@ -13,7 +13,7 @@
 - Created SSH key from Terraform. Although this is not secure and should be stored in some service like Vault, it works for this exercise
 - To connect to the instance, we would need to get the SSH private key and IP from outputs
   ```bash
-  terraform output ssh_private_key > key 
+  terraform output ssh_private_key | sed 's/^.*EOT.*//g' > key 
   chmod 0600 key
   INSTANCE_IP=$(terraform output public_ip | sed 's/"//g')
   ssh -i key ubuntu@${INSTANCE_IP}
@@ -42,8 +42,15 @@
   - `AWS_DEFAULT_REGION` ( this is not needed, as we configured the region in the code )
 
 - New content for Ghost server could be uploaded to the server after `main` branch push/merge events from Github Actions pipeline, if we store it as part of the repo
+
+- Get SSH private key
+  ```bash
+  terraform output ssh_private_key | sed 's/^.*EOT.*//g'
+  ```
+
 - Setup CICD pipeline variables we would need to configure to use [rsync action](https://github.com/marketplace/actions/action-rsync)
 
-  - `AWS_INSTANCE_IP`
-  - `AWS_INSTANCE_SSH_KEY`
+  - `AWS_HOST_IP`
+  - `AWS_SSH_PRIVKEY`
 
+- Both pipelines have been defined in `.github/workflows`

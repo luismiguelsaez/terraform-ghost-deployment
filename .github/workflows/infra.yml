@@ -8,7 +8,6 @@ on:
 
   workflow_dispatch:
 
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -19,5 +18,25 @@ jobs:
 
       - name: terraform validate
         uses: dflook/terraform-validate@v1
+        with:
+          path: infra
+  plan:
+    runs-on: ubuntu-latest
+    name: Plan terraform changes
+    needs: [validate]
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: terraform plan
+        uses: dflook/terraform-plan@v1
+        with:
+          path: infra
+
+      - name: terraform apply
+        uses: dflook/terraform-apply@v1
         with:
           path: infra

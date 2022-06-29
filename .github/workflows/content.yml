@@ -1,0 +1,26 @@
+name: CONTENT
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  rsync:
+    runs-on: ubuntu-latest
+    env:
+      AWS_HOST_IP: ${{ secrets.AWS_HOST_IP }}
+      AWS_SSH_PRIVKEY: ${{ secrets.AWS_SSH_PRIVKEY }} 
+    steps:
+      - uses: actions/checkout@v2
+      - uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{ secrets.AWS_HOST_IP }}
+          KEY: ${{ secrets.AWS_SSH_PRIVKEY }}
+          USER: app
+          SOURCE: ./content 
+          TARGET: /data/ghost/content
+          VERBOSE: true
